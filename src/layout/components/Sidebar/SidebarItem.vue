@@ -14,8 +14,8 @@
       </template>
       <!-- 递归组件 -->
       <sidebar-item
-        v-for="child in item.children"
-        :key="child.path"
+        v-for="(child,index) in item.children"
+        :key="index + child.path"
         :is-nest="true"
         :item="child"
         :base-path="resolvePath(child.path)"

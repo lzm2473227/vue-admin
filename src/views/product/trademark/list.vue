@@ -1,9 +1,15 @@
 <template>
   <div>
-    <el-button type="primary" @click="visible = true" class="el-icon-plus"
-      >添加</el-button
+    <el-button type="primary" @click="add" class="el-icon-plus">添加</el-button>
+    <el-table
+      v-loading="loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.8)"
+      :data="TrademarkList"
+      border
+      style="width: 100%; margin: 20px 0"
     >
-    <el-table :data="TrademarkList" border style="width: 100%; margin: 20px 0">
       <el-table-column
         fixed
         type="index"
@@ -21,9 +27,19 @@
       </el-table-column>
 
       <el-table-column prop="city" label="操作">
-        <template>
-          <el-button type="warning" icon="el-icon-edit ">修改</el-button>
-          <el-button type="danger" icon="el-icon-delete">删除</el-button>
+        <template slot-scope="{ row }">
+          <el-button
+            type="warning"
+            @click="updateTrademark(row)"
+            icon="el-icon-edit "
+            >修改</el-button
+          >
+          <el-button
+            type="danger"
+            @click="delTrademark(row)"
+            icon="el-icon-delete"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -41,7 +57,11 @@
     >
     </el-pagination>
     <!--对话框 -->
-    <el-dialog title="添加品牌" :visible.sync="visible" width="50%">
+    <el-dialog
+      :title="`${trademarkForm.id ? '删除' : '添加'}品牌`"
+      :visible.sync="visible"
+      width="50%"
+    >
       <el-form
         :model="trademarkForm"
         :rules="rules"
@@ -84,6 +104,7 @@
 </template>
 
 <script>
+import { Row } from "element-ui";
 export default {
   name: "TrademarkList",
   data() {
@@ -115,16 +136,17 @@ export default {
           },
         ],
       },
+      loading: false,
     };
   },
   methods: {
     submitForm(form) {
-      this.$refs[form].validate(async(valid) => {
+      this.$refs[form].validate(async (valid) => {
         if (valid) {
           const result = await this.$API.trademark.addTrademark(
             this.trademarkForm
           );
-        if (result.code === 200) {
+          if (result.code === 200) {
             this.$message.success("添加品牌数据成功~");
             this.visible = false; // 隐藏对话框
             this.getPageList(this.page, this.limit); // 请求加载新数据
@@ -140,7 +162,7 @@ export default {
     },
     // beforeAvatarUpload() {},
     beforeAvatarUpload(file) {
-      // console.log(file);
+      console.log(file);
       const imgTypes = ["image/jpg", "image/png", "image/jpeg"];
       const isValidType = imgTypes.indexOf(file.type) > -1;
       const isLt = file.size / 1024 < 50;
@@ -153,8 +175,9 @@ export default {
       }
       return isValidType && isLt;
     },
-
+    //更新获取页面
     async getPageList(page, limit) {
+      loading: true;
       const result = await this.$API.trademark.getPageList(page, limit);
       //   console.log(result);
       if (result.code === 200) {
@@ -166,6 +189,27 @@ export default {
       } else {
         this.$message.error("获取品牌列表失败");
       }
+      loading: false;
+    },
+    //删除商品
+    async delTrademark(data) {
+      const re = await this.$API.trademark.delTrademark(data.id);
+      //   console.log(re);
+      this.getPageList(this.page, this.limit);
+    },
+    //点击修改商品后重新点击添加要清空数据
+    add(row) {
+      this.visible = true;
+      this.trademarkForm = {};
+    },
+    //修改商品
+    updateTrademark(row) {
+      //显示对话框
+      this.visible = true;
+      this.trademarkForm = { ...row };
+      //  结构多复杂的时候用下面这种方法，没有函数就不用深度拷贝
+      // this.trademarkForm=JSON.parse(JSON.stringify(row))
+      this.getPageList(this.page, this.limit);
     },
   },
   mounted() {
