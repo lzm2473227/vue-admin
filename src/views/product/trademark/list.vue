@@ -30,12 +30,14 @@
         <template slot-scope="{ row }">
           <el-button
             type="warning"
+            size="mini"
             @click="updateTrademark(row)"
             icon="el-icon-edit "
             >修改</el-button
           >
           <el-button
             type="danger"
+            size="mini"
             @click="delTrademark(row)"
             icon="el-icon-delete"
             >删除</el-button
@@ -58,7 +60,7 @@
     </el-pagination>
     <!--对话框 -->
     <el-dialog
-      :title="`${trademarkForm.id ? '删除' : '添加'}品牌`"
+      :title="`${trademarkForm.id ? '修改' : '添加'}品牌`"
       :visible.sync="visible"
       width="50%"
     >
@@ -114,6 +116,7 @@ export default {
       limit: 3, // 每页条数
       total: 0, //总数
       visible: false, //对话框开关显示或者隐藏
+      loading: false,   //loading加载的图片
       trademarkForm: {
         //表单的数据
         tmName: "",
@@ -136,11 +139,11 @@ export default {
           },
         ],
       },
-      loading: false,
     };
   },
   methods: {
     submitForm(form) {
+      // 校验表单
       this.$refs[form].validate(async (valid) => {
         if (valid) {
           const result = await this.$API.trademark.addTrademark(
@@ -156,28 +159,29 @@ export default {
         }
       });
     },
+    // 上传图片成功的回调
     handleAvatarSuccess(res) {
       this.trademarkForm.logoUrl = res.data;
       console.log(res);
     },
-    // beforeAvatarUpload() {},
+
     beforeAvatarUpload(file) {
-      console.log(file);
+      //   console.log(file);
       const imgTypes = ["image/jpg", "image/png", "image/jpeg"];
       const isValidType = imgTypes.indexOf(file.type) > -1;
-      const isLt = file.size / 1024 < 50;
+      const isLt = file.size / 1024 < 1024;
 
       if (!isValidType) {
         this.$message.error("上传品牌LOGO只能是 JPG 或 PNG 格式!");
       }
       if (!isLt) {
-        this.$message.error("上传品牌LOGO大小不能超过 50 kb!");
+        this.$message.error("上传品牌LOGO大小不能超过 2000 kb");
       }
       return isValidType && isLt;
     },
     //更新获取页面
     async getPageList(page, limit) {
-      loading: true;
+      this.loading = true;
       const result = await this.$API.trademark.getPageList(page, limit);
       //   console.log(result);
       if (result.code === 200) {
@@ -189,7 +193,7 @@ export default {
       } else {
         this.$message.error("获取品牌列表失败");
       }
-      loading: false;
+      this.loading = false;
     },
     //删除商品
     async delTrademark(data) {
@@ -200,7 +204,10 @@ export default {
     //点击修改商品后重新点击添加要清空数据
     add(row) {
       this.visible = true;
-      this.trademarkForm = {};
+      this.trademarkForm = {
+        tmName: "",
+        logoUrl: "",
+      };
     },
     //修改商品
     updateTrademark(row) {

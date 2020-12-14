@@ -1,10 +1,17 @@
 <template>
   <div>
     <!-- 这个组件和list子父关系，用自定义事件方便 -->
-    <Category @change="getAttrList" />
+    <Category @change="getAttrList" @clearList="clearList" />
 
     <el-card v-show="isShowList" class="box-card" style="margin-top: 20px">
-      <el-button type="primary" icon="el-icon-plus">添加属性</el-button>
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        :disabled="!category.category3Id"
+        @click="add"
+        >添加属性</el-button
+      >
+
       <el-table :data="attrList" border style="width: 100%; margin: 20px 0">
         <el-table-column type="index" label="序号" width="80" align="center">
         </el-table-column>
@@ -49,7 +56,12 @@
         </el-form-item>
       </el-form>
 
-      <el-button type="primary" round icon="el-icon-plus" @click="attrAddValue"
+      <el-button
+        type="primary"
+        round
+        icon="el-icon-plus"
+        @click="attrAddValue"
+        :disabled="!attr.attrName"
         >添加属性值</el-button
       >
       <el-button round>取消</el-button>
@@ -107,33 +119,58 @@
 </template>
 
 <script>
-import { category } from "@/api";
+// import { category } from "@/api";
 import Category from "./category";
 export default {
   name: "AttrList",
   data() {
     return {
-      attrList: [],
-      isShowList: true,
+      attrList: [], //全部的数据
+      isShowList: true, //页面切换的开关
       attr: {
         attrName: "",
         attrValueList: [],
+      },
+      category: {
+        category3Id: "",
       },
     };
   },
 
   methods: {
+    //清空列表的数据
+    clearList() {
+      this.attrList = [];
+      //   禁用按钮
+      this.category.category3Id = "";
+    },
+    //添加属性列表
+    add() {
+      this.isShowList = false;
+      this.attr.attrName = "";
+      this.attr.attrValueList = [];
+    },
     //如果是空没有valueName，就直接把自己删掉
-    editCom(row, $index) {
+    editCom(row, index) {
       if (!row.valueName) {
         this.attr.attrName.splice(index, 1);
         return;
       }
-      row.edit = false
+      row.edit = false;
     },
     //添加后保存
     async save() {
-      const result = await this.$API.attr.saveAttrInfo(this.attr);
+      // 添加  需要判断它的id，没有id才是新添加的
+      const isAdd = !this.attr.id;
+      const data = this.attr;
+      if (isAdd) {
+        // this.attr里面只有attrName和attrValueList
+        // 还需要categoryId和categoryLevel
+        data.categoryId = this.category.category3Id;
+        data.categoryLevel = 3;
+      }
+      // 修改    就直接修改
+      const result = await this.$API.attr.saveAttrInfo(data);
       if (result.code === 200) {
         this.$message.success("更新成功");
         //保存后页面切换回去
