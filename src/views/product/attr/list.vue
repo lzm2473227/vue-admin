@@ -119,8 +119,7 @@
 </template>
 
 <script>
-// import { category } from "@/api";
-import Category from "./category";
+import Category from "@/components/Category";
 export default {
   name: "AttrList",
   data() {
@@ -149,6 +148,8 @@ export default {
       this.isShowList = false;
       this.attr.attrName = "";
       this.attr.attrValueList = [];
+      //   id也要清空
+      this.attr.id = "";
     },
     //如果是空没有valueName，就直接把自己删掉
     editCom(row, index) {

@@ -15,7 +15,6 @@
   display: none;
 }
 
-
 // to fixed https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
   transform: none;
@@ -39,7 +38,7 @@
 // dropdown
 .el-dropdown-menu {
   a {
-    display: block
+    display: block;
   }
 }
 
@@ -47,3 +46,11 @@
 .el-range-separator {
   box-sizing: content-box;
 }
+
+// .pagination {
+//   text-align: right;
+// }
+
+// .el-pagination__sizes {
+//   margin-left: 250px;
+// }

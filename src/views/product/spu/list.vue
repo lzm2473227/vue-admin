@@ -1,11 +1,26 @@
 <template>
-<div>
-  Spu管理
-</div>
+  <div>
+    <Category />
+    <SpuShowList v-show="isShowlist" />
+    <SpuUpdataList v-show="!isShowlist" />
+  </div>
 </template>
 
 <script>
+import Category from "@/components/Category";
+import SpuShowList from "./spuShowList";
+import SpuUpdataList from "./spuUpdataList";
 export default {
-  name: 'SpuList',
-}
+  name: "SpuList",
+  data() {
+    return {
+      isShowlist: false,
+    };
+  },
+  components: {
+    Category,
+    SpuShowList,
+    SpuUpdataList,
+  },
+};
 </script>

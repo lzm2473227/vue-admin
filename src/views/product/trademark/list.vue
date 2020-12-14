@@ -116,7 +116,7 @@ export default {
       limit: 3, // 每页条数
       total: 0, //总数
       visible: false, //对话框开关显示或者隐藏
-      loading: false,   //loading加载的图片
+      loading: false,   //loading加载的开关
       trademarkForm: {
         //表单的数据
         tmName: "",
