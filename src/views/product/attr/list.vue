@@ -1,6 +1,9 @@
 <template>
   <div>
     <!-- 这个组件和list子父关系，用自定义事件方便 -->
+    <!-- <Category @change="getAttrList" @clearList="clearList" /> -->
+
+    <!-- 全局事件总线 -->
     <Category @change="getAttrList" @clearList="clearList" />
 
     <el-card v-show="isShowList" class="box-card" style="margin-top: 20px">
@@ -213,9 +216,19 @@ export default {
       if (result.code === 200) {
         this.attrList = result.data;
       } else {
-        this.$message.error(result.data);
+        this.$message.error(result.message);
       }
     },
+  },
+  //全局事件总线
+  mounted() {
+    this.$bus.$on("change", this.getAttrList);
+    this.$bus.$on("clearList", this.clearList);
+  },
+  //全局事件总线一定要记得收尾，解绑这些事件
+  beforeDestroy() {
+    this.$bus.$off("change", this.handleCategoryChange);
+    this.$bus.$off("clearList", this.clearList);
   },
   components: {
     Category,

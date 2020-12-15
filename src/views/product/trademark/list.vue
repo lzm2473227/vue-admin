@@ -50,7 +50,7 @@
     <el-pagination
       @size-change="getPageList(page, $event)"
       @current-change="getPageList($event, limit)"
-      class="trademark-pagination"
+      class="pagination"
       :page-sizes="[3, 6, 9]"
       :page-size.sync="limit"
       :current-page.sync="page"
@@ -116,7 +116,7 @@ export default {
       limit: 3, // 每页条数
       total: 0, //总数
       visible: false, //对话框开关显示或者隐藏
-      loading: false,   //loading加载的开关
+      loading: false, //loading加载的开关
       trademarkForm: {
         //表单的数据
         tmName: "",
@@ -227,10 +227,6 @@ export default {
 <style lang="sass" scoped>
 .trademark-img
     width: 100px
-.trademark-pagination
-    text-align: right
->>>.el-pagination__sizes
-    margin-left: 250px
 >>>.avatar-uploader .el-upload
     border: 1px dashed #d9d9d9
     border-radius: 6px

@@ -79,8 +79,8 @@ export default {
       } else {
         this.$message.error("获取失败");
       }
-      //清空列表
-      this.$emit('clearList')
+      //清空列表    全局事件总线这咯要加$bus
+      this.$bus.$emit('clearList')
     },
     // 获取三级分类
     async handleSelectChange2(category2Id) {
@@ -96,7 +96,7 @@ export default {
         this.$message.error("获取失败");
       }
       //清空列表
-       this.$emit('clearList')
+       this.$bus.$emit('clearList')
     },
     // 获取全部的分类id  获取分类对应的属性列表  
     async handleSelectChange3(category3Id) {
@@ -105,7 +105,7 @@ export default {
         category3Id,
       };
     //   console.log(category);
-      this.$emit("change", category);  //自定义事件传过去
+      this.$bus.$emit("change", category);  //自定义事件传过去
     },
   },
   async mounted() {

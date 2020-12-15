@@ -1,38 +1,50 @@
 <template>
   <el-card style="margin-top: 20px">
-    <el-form label-width="80px">
-      <el-form-item label="SPU名称">
-        <el-input placeholder="SPU名称"></el-input>
+    <el-form label-width="80px" :model="spu">
+      <el-form-item label="SPU名称" prop="spuName">
+        <el-input placeholder="SPU名称" v-model="spu.spuName"></el-input>
       </el-form-item>
 
-      <el-form-item label="品牌">
-        <el-select>
-          <el-option>111</el-option>
-          <el-option>222</el-option>
+      <el-form-item label="品牌" prop="tmId">
+        <el-select placeholder="请选择品牌" v-model="spu.tmId">
+          <el-option
+            v-for="tm in trademarkList"
+            :key="tm.id"
+            :label="tm.tmName"
+            :value="tm.id"
+          ></el-option>
         </el-select>
       </el-form-item>
 
-      <el-form-item label="SPU描述">
-        <el-input type="textarea" placeholder="SPU描述"></el-input>
+      <el-form-item label="SPU描述" prop="description">
+        <el-input
+          type="textarea"
+          placeholder="请输入SPU描述"
+          v-model="spu.description"
+        ></el-input>
       </el-form-item>
 
       <el-form-item label="SPU图片">
         <el-upload
           class="avatar-uploader"
           list-type="picture-card"
+          :file-list="imageList"
           :action="`${$BASE_API}/admin/product/fileUpload`"
-          :show-file-list="false"
+          :on-preview="handlePictureCardPreview"
         >
-          <img v-if="false" :src="trademarkForm.logoUrl" class="avatar" />
           <i class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
         <span>只能上传jpg,png文件，且不超过2000kb</span>
       </el-form-item>
 
-      <el-form-item label="销售属性">
-        <el-select placeholder="还有三个未选择">
-          <el-option>111</el-option>
-          <el-option>222</el-option>
+      <el-form-item label="销售属性" prop="saleAttrId">
+        <el-select placeholder="还有三个未选择" v-model="spu.saleAttrId">
+          <el-option
+            v-for="sale in filterSaleAttrList"
+            :label="sale.name"
+            :value="sale.id"
+            :key="sale.id"
+          ></el-option>
         </el-select>
         <el-button type="primary" class="el-icon-plus">添加销售属性</el-button>
       </el-form-item>
@@ -43,7 +55,7 @@
           element-loading-text="拼命加载中"
           element-loading-spinner="el-icon-loading"
           element-loading-background="rgba(0, 0, 0, 0.8)"
-          :data="[]"
+          :data="spuSaleAttrList"
           border
           style="width: 100%; margin: 20px 0"
         >
@@ -55,41 +67,145 @@
             align="center"
           >
           </el-table-column>
-          <el-table-column prop="tmName" label="品牌名称"> </el-table-column>
+          <el-table-column prop="saleAttrName" label="属性名称">
+          </el-table-column>
 
-          <el-table-column label="品牌LOGO">
-            <template slot-scope="scope">
-              <img class="trademark-img" :src="scope.row.logoUrl" alt="img" />
+          <el-table-column label="属性值列表">
+            <template v-slot="{ row }">
+              <el-tag
+                style="margin-right: 5px"
+                v-for="attrVal in row.spuSaleAttrValueList"
+                :key="attrVal.id"
+                >{{ attrVal.saleAttrValueName }}</el-tag
+              >
             </template>
           </el-table-column>
 
           <el-table-column label="操作">
             <template>
-              <el-button type="warning" size="mini" icon="el-icon-edit "
-                >修改</el-button
-              >
-              <el-button type="danger" size="mini" icon="el-icon-delete"
-                >删除</el-button
-              >
+              <el-button
+                type="warning"
+                size="mini"
+                icon="el-icon-edit "
+              ></el-button>
+              <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+              ></el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-form-item>
+      <el-form-item>
+        <el-button type="primary">保存</el-button>
+        <el-button>取消</el-button>
+      </el-form-item>
     </el-form>
-
-    <el-button round type="primary">保存</el-button>
-    <el-button round>取消</el-button>
+    <el-dialog :visible.sync="visible">
+      <img width="100%" :src="previewImgUrl" alt="img" />
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
 export default {
   name: "SpuUpdataList",
+  props: {
+    item: Object,
+  },
   data() {
     return {
-    //   TrademarkList: [],
-      loading: false,
+      spu: this.item,
+      trademarkList: [], // 所有品牌数据
+      imageList: [], // 所有图片列表
+      saleAttrList: [], // 所有销售属性列表
+      spuSaleAttrList: [], // 当前SPU销售属性列表
+      previewImgUrl: "", // 图片地址
+      visible: false, // 图片对话框显示&隐藏
+      loading: false, //loading的开关
     };
+  },
+  computed: {
+    filterSaleAttrList() {
+      return this.saleAttrList.filter((sale) => {
+        // this.spuSaleAttrList.indexOf() // 只适用于数组中是基本类型
+        // 找到了返回{}  没有找到返回undefined
+        return !this.spuSaleAttrList.find(
+          (spuSale) => spuSale.baseSaleAttrId === sale.id
+        ); // 适用于数组中是引用类型
+      });
+    },
+  },
+  methods: {
+    // 处理图片预览
+    handlePictureCardPreview(file) {
+      this.previewImgUrl = file.url;
+      this.visible = true;
+    },
+    // 获取所有品牌数据
+    async getTrademarkList() {
+      const result = await this.$API.spu.getTrademarkList();
+      if (result.code === 200) {
+        this.$message.success("获取所有品牌成功");
+        this.trademarkList = result.data;
+        // console.log(result);
+      } else {
+        this.$message.error(result.message);
+      }
+    },
+    //获取SPU的图片列表
+    async getSpuImageList() {
+      const { id } = this.spu;
+      const result = await this.$API.spu.getSpuImageList(id);
+      console.log(result.id);
+      console.log(result);
+      if (result.code === 200) {
+        this.$message.success("获取所有图片成功~");
+        this.imageList = result.data.map((img) => {
+          return {
+            id: img.id,
+            name: img.imgName,
+            url: img.imgUrl,
+          };
+        });
+      } else {
+        this.$message.error(result.message);
+      }
+    },
+    // 获取所有销售属性列表
+    async getSaleAttrList() {
+      const result = await this.$API.spu.getSaleAttrList();
+      if (result.code === 200) {
+        this.$message.success("获取所有销售属性列表成功");
+        this.saleAttrList = result.data;
+        // console.log(result);
+      } else {
+        this.$message.error(result.message);
+      }
+    },
+    //  //获取SPU的销售属性列表
+    async getSpuSaleAttrList() {
+      const { id } = this.spu;
+      const result = await this.$API.spu.getSpuSaleAttrList(id);
+      if (result.code === 200) {
+        this.$message.success("获取SPU销售属性列表成功");
+        this.spuSaleAttrList = result.data;
+        // console.log(result);
+      } else {
+        this.$message.error(result.message);
+      }
+    },
+  },
+  mounted() {
+    this.getTrademarkList();
+    this.getSpuImageList();
+    this.getSaleAttrList();
+    this.getSpuSaleAttrList();
+
+    // this.$bus.$on("test", (data) => {
+    //   this.spu = data; //更新data的数据
+    // });
   },
 };
 </script>
