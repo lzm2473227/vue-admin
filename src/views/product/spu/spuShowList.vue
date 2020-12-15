@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import { c } from "@/test/es-module/test1";
 export default {
   name: "SpuShowList",
   props: {

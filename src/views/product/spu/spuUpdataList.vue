@@ -31,10 +31,13 @@
           :file-list="imageList"
           :action="`${$BASE_API}/admin/product/fileUpload`"
           :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
         >
           <i class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
-        <span>只能上传jpg,png文件，且不超过2000kb</span>
+        <span>只能上传jpg,png文件，且不超过1000kb</span>
       </el-form-item>
 
       <el-form-item label="销售属性" prop="saleAttrId">
@@ -84,11 +87,6 @@
           <el-table-column label="操作">
             <template>
               <el-button
-                type="warning"
-                size="mini"
-                icon="el-icon-edit "
-              ></el-button>
-              <el-button
                 type="danger"
                 size="mini"
                 icon="el-icon-delete"
@@ -127,6 +125,9 @@ export default {
     };
   },
   computed: {
+    // formatImageList() {
+    //   return this.trademarkList
+    // },
     filterSaleAttrList() {
       return this.saleAttrList.filter((sale) => {
         // this.spuSaleAttrList.indexOf() // 只适用于数组中是基本类型
@@ -138,6 +139,34 @@ export default {
     },
   },
   methods: {
+    //上传图片之前的回调函数
+    beforeAvatarUpload(file) {
+    //   console.log(file);
+      const imgTypes = ["image/jpg", "image/png", "image/jpeg"];
+      const isValidType = imgTypes.indexOf(file.type) > -1;
+      const isLt = file.size / 1024 < 1024;
+
+      if (!isValidType) {
+        this.$message.error("上传品牌LOGO只能是 JPG 或 PNG 格式!");
+      }
+      if (!isLt) {
+        this.$message.error("上传品牌LOGO大小不能超过 10240 kb");
+      }
+      return isValidType && isLt;
+    },
+    // 上传图片成功的回调
+    handleAvatarSuccess(res, file) {
+      this.imageList.push({
+        name: file.name, // 文件名称
+        url: res.data, //图片地址
+      });
+    },
+    // 处理删除图片
+    handleRemove(file) {
+        // console.log(file,fileList);
+        //我这里不是用计算属性的，所以得用处理后的数据，这里是url   img.url
+      this.imageList = this.imageList.filter((img) => img.url !== file.url);
+    },
     // 处理图片预览
     handlePictureCardPreview(file) {
       this.previewImgUrl = file.url;
@@ -158,13 +187,13 @@ export default {
     async getSpuImageList() {
       const { id } = this.spu;
       const result = await this.$API.spu.getSpuImageList(id);
-      console.log(result.id);
-      console.log(result);
+      //   console.log(result.id);
+      //   console.log(result);
       if (result.code === 200) {
         this.$message.success("获取所有图片成功~");
         this.imageList = result.data.map((img) => {
+            //处理数据，因为数据名字不一样，所以要改成一样的才可以加进去
           return {
-            id: img.id,
             name: img.imgName,
             url: img.imgUrl,
           };
