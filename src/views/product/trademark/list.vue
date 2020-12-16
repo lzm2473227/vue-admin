@@ -106,7 +106,6 @@
 </template>
 
 <script>
-import { Row } from "element-ui";
 export default {
   name: "TrademarkList",
   data() {
@@ -122,6 +121,7 @@ export default {
         tmName: "",
         logoUrl: "",
       },
+      //效验规则
       rules: {
         tmName: [
           {
@@ -146,11 +146,30 @@ export default {
       // 校验表单
       this.$refs[form].validate(async (valid) => {
         if (valid) {
-          const result = await this.$API.trademark.addTrademark(
-            this.trademarkForm
-          );
+          const { trademarkForm } = this;
+          // 代表是否是更新
+          const isUpdate = !!trademarkForm.id;
+
+          // 如果是修改需要验证
+        //   if (isUpdate) {
+        //     const tm = this.TrademarkList.find(
+        //       (tm) => tm.id === trademarkForm.id
+        //     );
+        //   }
+
+          // 表单校验通过
+            console.log(trademarkForm);
+          let result;
+
+          if (isUpdate) {
+            result = await this.$API.trademark.updateTrademark(trademarkForm);
+          } else {
+            result = await this.$API.trademark.addTrademark(trademarkForm);
+          }
+          console.log(result);
+
           if (result.code === 200) {
-            this.$message.success("添加品牌数据成功~");
+            this.$message.success(`${isUpdate ? "修改" : "添加"}品牌数据成功~`);
             this.visible = false; // 隐藏对话框
             this.getPageList(this.page, this.limit); // 请求加载新数据
           } else {
@@ -164,7 +183,7 @@ export default {
       this.trademarkForm.logoUrl = res.data;
       console.log(res);
     },
-
+    //上传图片之前的回调函数
     beforeAvatarUpload(file) {
       //   console.log(file);
       const imgTypes = ["image/jpg", "image/png", "image/jpeg"];
@@ -203,6 +222,8 @@ export default {
     },
     //点击修改商品后重新点击添加要清空数据
     add(row) {
+      // 清空表单的校验
+      this.$refs.trademarkForm && this.$refs.trademarkForm.clearValidate();
       this.visible = true;
       this.trademarkForm = {
         tmName: "",
@@ -211,6 +232,7 @@ export default {
     },
     //修改商品
     updateTrademark(row) {
+      this.$refs.trademarkForm && this.$refs.trademarkForm.clearValidate();
       //显示对话框
       this.visible = true;
       this.trademarkForm = { ...row };

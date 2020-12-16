@@ -20,10 +20,10 @@ export default {
     });
   },
 
-  //修改品牌
+  //修改更新品牌
   updateTrademark(data) {
     return request({
-      url: `${api_name}/updata`,
+      url: `${api_name}/update`,
       method: "PUT",
       data
     });
