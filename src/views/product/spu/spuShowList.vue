@@ -4,7 +4,7 @@
       type="primary"
       icon="el-icon-plus"
       :disabled="!category.category3Id"
-      @click="!isShow"
+      @click="$emit('showUpdataList', { category3Id: category.category3Id })"
       >添加SPU</el-button
     >
     <el-table
@@ -21,7 +21,12 @@
 
       <el-table-column label="操作">
         <template v-slot="{ row }">
-          <el-button type="primary" size="mini" icon="el-icon-plus"></el-button>
+          <el-button
+            type="primary"
+            @click="$emit('showSpuList', { ...row, ...category })"
+            size="mini"
+            icon="el-icon-plus"
+          ></el-button>
           <el-button
             type="primary"
             size="mini"
@@ -30,6 +35,7 @@
           ></el-button>
           <el-button type="info" size="mini" icon="el-icon-info"></el-button>
           <el-button
+            @click="delUpdataList"
             type="danger"
             size="mini"
             icon="el-icon-delete"
@@ -54,23 +60,28 @@
 <script>
 export default {
   name: "SpuShowList",
-  props: {
-    isShowlist: Boolean,
-  },
+  //   props: {
+  //     isShowlist: Boolean,
+  //   },
   data() {
     return {
-      isShow: this.isShowlist,
+      //   isShow: this.isShowlist,
       page: 1,
       limit: 3,
       total: 0,
       loading: false,
       spuList: [],
       category: {
+        category1Id: "",
+        category2Id: "",
         category3Id: "",
       },
     };
   },
   methods: {
+    delUpdataList() {
+      const { id } = this.spuList;
+    },
     // 获取SPU分页列表
     async getPageList(page, limit) {
       const { category3Id } = this.category;
@@ -92,7 +103,7 @@ export default {
     // 处理category的change   当选中三级分类时会触发
     handleCategoryChange(category) {
       //当选中3Id的时候会触发这个函数
-      this.category.category3Id = category.category3Id;
+      this.category = category;
       this.getPageList(this.page, this.limit);
     },
     // 当选中1级或2级分类触发，清空下面列表的数据

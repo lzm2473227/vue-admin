@@ -83,7 +83,7 @@
           </el-table-column>
 
           <el-table-column label="属性值列表">
-            <template v-slot="{ row}">
+            <template v-slot="{ row }">
               <el-tag
                 @close="delTag(index, row)"
                 closable
@@ -160,13 +160,13 @@ export default {
   computed: {
     formatImageList() {
       return this.imageList.map((img) => {
-          //处理数据，因为数据名字不一样，所以要改成一样的才可以加进去
-          return {
-            name: img.imgName,
-            url: img.imgUrl,
-            uid: img.uid || img.id,
-          };
-        });
+        //处理数据，因为数据名字不一样，所以要改成一样的才可以加进去
+        return {
+          name: img.imgName,
+          url: img.imgUrl,
+          uid: img.uid || img.id,
+        };
+      });
     },
 
     filterSaleAttrList() {
@@ -180,6 +180,7 @@ export default {
     },
   },
   methods: {
+    //保存效验
     save() {
       this.$refs.spuForm.validate(async (valid) => {
         if (valid) {
@@ -190,12 +191,17 @@ export default {
             spuImageList: this.imageList,
             spuSaleAttrList: this.spuSaleAttrList,
           };
+          let result;
           //发送数据
-          const result = await this.$API.spu.updateSpu(spu);
-        //   console.log(result);
+          if (spu.id) {
+            result = await this.$API.spu.updateSpu(spu);
+          } else {
+            result = await this.$API.spu.saveSpu(spu);
+          }
+          //   console.log(result);
           if (result.code === 200) {
-            this.$message.success("更新SPU成功");
             this.$emit("showList", this.spu.category3Id);
+            this.$message.success("更新SPU成功");
           } else {
             this.$message.error(result.message);
           }
@@ -297,7 +303,7 @@ export default {
       //   console.log(result);
       if (result.code === 200) {
         this.$message.success("获取所有图片成功~");
-        this.imageList = result.data
+        this.imageList = result.data;
       } else {
         this.$message.error(result.message);
       }
@@ -313,14 +319,14 @@ export default {
         this.$message.error(result.message);
       }
     },
-    //  //获取SPU的销售属性列表
+    //  获取SPU的销售属性值列表
     async getSpuSaleAttrList() {
       const { id } = this.spu;
       const result = await this.$API.spu.getSpuSaleAttrList(id);
       if (result.code === 200) {
         this.$message.success("获取SPU销售属性列表成功");
         this.spuSaleAttrList = result.data;
-        console.log(result);
+        // console.log(result);
       } else {
         this.$message.error(result.message);
       }
@@ -328,9 +334,13 @@ export default {
   },
   mounted() {
     this.getTrademarkList();
-    this.getSpuImageList();
     this.getSaleAttrList();
-    this.getSpuSaleAttrList();
+    //如果是添加就不需要这些方法
+    //是添加就是没有
+    if (this.spu.id) {
+      this.getSpuImageList();
+      this.getSpuSaleAttrList();
+    }
 
     // this.$bus.$on("test", (data) => {
     //   this.spu = data; //更新data的数据
