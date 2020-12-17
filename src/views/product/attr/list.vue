@@ -212,7 +212,7 @@ export default {
     async getAttrList(category) {
       this.category = category;
       const result = await this.$API.attr.getAttrList(category);
-      console.log(result);
+    //   console.log(result);
       if (result.code === 200) {
         this.attrList = result.data;
       } else {

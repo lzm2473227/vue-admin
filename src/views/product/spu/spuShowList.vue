@@ -31,7 +31,7 @@
             type="primary"
             size="mini"
             icon="el-icon-edit"
-            @click="$emit('showUpdataList', row)"
+            @click="$emit('showUpdataList', {...row, ...category})"
           ></el-button>
           <el-button type="info" size="mini" icon="el-icon-info"></el-button>
           <el-button

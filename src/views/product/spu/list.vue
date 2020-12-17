@@ -5,7 +5,11 @@
     v-if才可以，因为他是直接卸载了组件 -->
     <div v-else>
       <Category />
-      <SpuShowList v-if="isShowlist" @showUpdataList="showUpdataList" @showSpuList="showSpuList" />
+      <SpuShowList
+        v-if="isShowlist"
+        @showUpdataList="showUpdataList"
+        @showSpuList="showSpuList"
+      />
       <SpuUpdataList v-else :item="item" @showList="showList" />
     </div>
   </div>
@@ -36,11 +40,11 @@ export default {
       this.item = { ...row };
       //   this.$bus.$emit("test", this.item);   //更新子组件数据的
     },
-    showList(category3Id) {
+    showList(category) {
       this.isShowlist = true;
       // 等ShowList组件加载完成，在触发事件
       this.$nextTick(() => {
-        this.$bus.$emit("showList", { category3Id });
+        this.$bus.$emit("change",category);
       });
     },
   },
