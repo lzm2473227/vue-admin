@@ -102,7 +102,8 @@ export default {
     },
     // 处理category的change   当选中三级分类时会触发
     handleCategoryChange(category) {
-      //当选中3Id的时候会触发这个函数
+      //当选中3Id的时候会触发这个函数,一开始我就只写category3id,
+      //但是后面要category全部的id,所以这里写category全部的id
       this.category = category;
       this.getPageList(this.page, this.limit);
     },

@@ -140,6 +140,8 @@
           >取消</el-button
         >
       </el-form-item>
+      <!-- 这里取消一开始没有携带2和3id，因为v-if的原因卸载了组件，所以必须要携带1id,2id,3id
+      这三个id，否则就有点问题了，就只会有3id， -->
     </el-form>
     <el-dialog :visible.sync="visible">
       <img width="100%" :src="previewImgUrl" alt="img" />

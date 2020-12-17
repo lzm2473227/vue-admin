@@ -21,6 +21,10 @@
       <el-table-column prop="tmName" label="品牌名称"> </el-table-column>
 
       <el-table-column label="品牌LOGO">
+        <!-- 
+            scope代表所有数据
+              scope.row 代表当前行所有数据
+          -->
         <template slot-scope="scope">
           <img class="trademark-img" :src="scope.row.logoUrl" alt="img" />
         </template>
@@ -46,7 +50,21 @@
       </el-table-column>
     </el-table>
     <!-- 分页器 -->
-    <!-- sync修饰符当页数跳转，跳转后的当前页面显示个数出现bug时就可以使用，他会修复这个bug -->
+    <!--
+        sync修饰符
+      :page-size.sync="limit"   可以让limit更新变成同步更新
+      :current-page.sync="page" 可以让page更新变成同步更新
+
+      $event
+        1.  在DOM事件中代表 event
+        <button @click="handle(123, $event)"></button>
+        触发事件是浏览器的行为，所以$event代表event
+
+        2. 在自定义事件中代表 第一个参数
+          <button @aaa="handle($event)"></button>
+          假设这样触发自定义事件： this.$emit('aaa', 123, 456);
+          那么$event就为123（第一个参数）
+    -->
     <el-pagination
       @size-change="getPageList(page, $event)"
       @current-change="getPageList($event, limit)"
@@ -118,13 +136,15 @@ export default {
       loading: false, //loading加载的开关
       trademarkForm: {
         //表单的数据
-        tmName: "",
-        logoUrl: "",
+        tmName: "", //品牌名称
+        logoUrl: "", //
       },
       //效验规则
       rules: {
         tmName: [
           {
+            // required: true,   必填项
+            /*rule  校验的字段名value, 校验的字段值callback ,决定表单校验成功/失败*/
             required: true,
             min: 3,
             max: 5,
@@ -151,16 +171,16 @@ export default {
           const isUpdate = !!trademarkForm.id;
 
           // 如果是修改需要验证
-        //   if (isUpdate) {
-        //     const tm = this.TrademarkList.find(
-        //       (tm) => tm.id === trademarkForm.id
-        //     );
-        //   }
+          //   if (isUpdate) {
+          //     const tm = this.TrademarkList.find(
+          //       (tm) => tm.id === trademarkForm.id
+          //     );
+          //   }
 
           // 表单校验通过
-            console.log(trademarkForm);
+        //   console.log(trademarkForm);
           let result;
-
+        //判断是修改还是添加，有id就是添加，没有就走else新增
           if (isUpdate) {
             result = await this.$API.trademark.updateTrademark(trademarkForm);
           } else {

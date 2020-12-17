@@ -4,7 +4,7 @@
     <!-- <Category @change="getAttrList" @clearList="clearList" /> -->
 
     <!-- 全局事件总线 -->
-    <Category @change="getAttrList" @clearList="clearList" />
+    <Category />
 
     <el-card v-show="isShowList" class="box-card" style="margin-top: 20px">
       <el-button
@@ -91,6 +91,8 @@
               ref="input"
               size="mini"
             ></el-input>
+            <!-- 直接给对象添加新属性不是响应式数据, 通过this.$set添加的属性才是响应式 -->
+            <!-- this.$set(row, "edit", true); -->
             <span
               style="display: block; width: 100%"
               v-else
@@ -101,6 +103,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template v-slot="{ row, $index }">
+            <!-- element-ui文档这里的Confirm有问题，这里要加on，方法名字叫onConfirm -->
             <el-popconfirm
               :title="`确定删除${row.valueName}吗？`"
               @onConfirm="delAttrList($index)"
@@ -130,8 +133,8 @@ export default {
       attrList: [], //全部的数据
       isShowList: true, //页面切换的开关
       attr: {
-        attrName: "",
-        attrValueList: [],
+        attrName: "", //属性名称
+        attrValueList: [], //属性值列表
       },
       category: {
         category3Id: "",
@@ -205,14 +208,14 @@ export default {
       //   this.attr = {
       //     ...attr,
       //   };
-      //这里用深度克隆，这样就会防止对象中对象还有引用关系
+      //这里用深度克隆，这样就会防止对象中对象还有引用关系   就是数组或者对象里面还有数组或者对象
       this.attr = JSON.parse(JSON.stringify(attr));
       this.isShowList = false;
     },
     async getAttrList(category) {
       this.category = category;
       const result = await this.$API.attr.getAttrList(category);
-    //   console.log(result);
+      //   console.log(result);
       if (result.code === 200) {
         this.attrList = result.data;
       } else {
