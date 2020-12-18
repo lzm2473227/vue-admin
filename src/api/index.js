@@ -7,6 +7,7 @@ export {default as clientUser} from './clientUser'
 export {default as order} from './order'
 export {default as trademark} from './product/trademark'
 export {default as spu} from './product/spu'
+export {default as sku} from './product/sku'
 // 1. 引入默认暴露的内容重命名为attr
 // 2. 将attr给分别暴露出去
 export {default as attr} from './product/attr'

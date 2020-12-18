@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SkuList v-if="isShowSkuList" :spuItem="spuItem" />
+    <SkuList v-if="isShowSkuList" :spuItem="spuItem" @showList="showList" />
     <!-- v-show因为是隐藏，但是组件还是加载了，必须在定义方法自己更新才可以，
     v-if才可以，因为他是直接卸载了组件 -->
     <div v-else>
@@ -42,10 +42,15 @@ export default {
     },
     showList(category) {
       this.isShowlist = true;
+      this.isShowSkuList = false;
+
       // 等ShowList组件加载完成，在触发事件
-    //   this.$nextTick(() => {
-    //     this.$bus.$emit("change",category);
-    //   });
+      //   this.$nextTick(() => {
+      //     this.$bus.$emit("change",category);
+      //   });
+    },
+    beforeDestory() {
+      this.$store.commit("category/SET_CATEGORY3_ID");
     },
   },
   components: {

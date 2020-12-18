@@ -354,6 +354,7 @@ export default {
     //   this.spu = data; //更新data的数据
     // });
   },
+  
 };
 </script>
 
