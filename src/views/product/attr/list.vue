@@ -125,6 +125,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import Category from "@/components/Category";
 export default {
   name: "AttrList",
@@ -136,12 +137,28 @@ export default {
         attrName: "", //属性名称
         attrValueList: [], //属性值列表
       },
-      category: {
-        category3Id: "",
-      },
+      //   category: {
+      //     category3Id: "",
+      //   },
     };
   },
-
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
+  },
+  watch: {
+    "category.category3Id"(category3Id) {
+      if (!category3Id) return;
+      this.getAttrList();
+    },
+    "category.category1Id"() {
+      this.clearList();
+    },
+    "category.category2Id"() {
+      this.clearList();
+    },
+  },
   methods: {
     //清空列表的数据
     clearList() {
@@ -212,8 +229,8 @@ export default {
       this.attr = JSON.parse(JSON.stringify(attr));
       this.isShowList = false;
     },
-    async getAttrList(category) {
-      this.category = category;
+    async getAttrList() {
+      const { category } = this;
       const result = await this.$API.attr.getAttrList(category);
       //   console.log(result);
       if (result.code === 200) {
@@ -225,13 +242,13 @@ export default {
   },
   //全局事件总线
   mounted() {
-    this.$bus.$on("change", this.getAttrList);
-    this.$bus.$on("clearList", this.clearList);
+    // this.$bus.$on("change", this.getAttrList);
+    // this.$bus.$on("clearList", this.clearList);
   },
   //全局事件总线一定要记得收尾，解绑这些事件
   beforeDestroy() {
-    this.$bus.$off("change", this.handleCategoryChange);
-    this.$bus.$off("clearList", this.clearList);
+    // this.$bus.$off("change", this.handleCategoryChange);
+    // this.$bus.$off("clearList", this.clearList);
   },
   components: {
     Category,

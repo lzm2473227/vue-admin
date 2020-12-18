@@ -31,7 +31,7 @@
             type="primary"
             size="mini"
             icon="el-icon-edit"
-            @click="$emit('showUpdataList', {...row, ...category})"
+            @click="$emit('showUpdataList', { ...row, ...category })"
           ></el-button>
           <el-button type="info" size="mini" icon="el-icon-info"></el-button>
           <el-button
@@ -58,11 +58,9 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "SpuShowList",
-  //   props: {
-  //     isShowlist: Boolean,
-  //   },
   data() {
     return {
       //   isShow: this.isShowlist,
@@ -71,12 +69,32 @@ export default {
       total: 0,
       loading: false,
       spuList: [],
-      category: {
-        category1Id: "",
-        category2Id: "",
-        category3Id: "",
-      },
+      //   category: {
+      //     category1Id: "",
+      //     category2Id: "",
+      //     category3Id: "",
+      //   },
     };
+  },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
+  },
+  watch: {
+    "category.category3Id": {
+      handler(category3Id) {
+        if (!category3Id) return;
+        this.getPageList(this.page, this.limit);
+      },
+      immediate: true,
+    },
+    "category.category1Id"() {
+      this.clearList();
+    },
+    "category.category2Id"() {
+      this.clearList();
+    },
   },
   methods: {
     delUpdataList() {
@@ -101,30 +119,30 @@ export default {
       }
     },
     // 处理category的change   当选中三级分类时会触发
-    handleCategoryChange(category) {
-      //当选中3Id的时候会触发这个函数,一开始我就只写category3id,
-      //但是后面要category全部的id,所以这里写category全部的id
-      this.category = category;
-      this.getPageList(this.page, this.limit);
-    },
+    // handleCategoryChange(category) {
+    //   //当选中3Id的时候会触发这个函数,一开始我就只写category3id,
+    //   //但是后面要category全部的id,所以这里写category全部的id
+    //   this.category = category;
+    //   this.getPageList(this.page, this.limit);
+    // },
     // 当选中1级或2级分类触发，清空下面列表的数据
     clearList() {
       this.page = 1;
       this.limit = 3;
       this.total = 0;
       this.spuList = [];
-      this.category.category3Id = "";
+      //   this.category.category3Id = "";
     },
   },
   //全局事件总线
   mounted() {
-    this.$bus.$on("change", this.handleCategoryChange);
-    this.$bus.$on("clearList", this.clearList);
+    // this.$bus.$on("change", this.handleCategoryChange);
+    // this.$bus.$on("clearList", this.clearList);
   },
   //全局事件总线一定要记得收尾，解绑这些事件
   beforeDestroy() {
-    this.$bus.$off("change", this.handleCategoryChange);
-    this.$bus.$off("clearList", this.clearList);
+    // this.$bus.$off("change", this.handleCategoryChange);
+    // this.$bus.$off("clearList", this.clearList);
   },
 };
 </script>

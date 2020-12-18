@@ -43,9 +43,9 @@ export default {
     showList(category) {
       this.isShowlist = true;
       // 等ShowList组件加载完成，在触发事件
-      this.$nextTick(() => {
-        this.$bus.$emit("change",category);
-      });
+    //   this.$nextTick(() => {
+    //     this.$bus.$emit("change",category);
+    //   });
     },
   },
   components: {

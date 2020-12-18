@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   name: "Category",
   data() {
@@ -58,64 +59,53 @@ export default {
         category2Id: "",
         category3Id: "",
       },
-      category1List: [], // 1级分类数据
-      category2List: [],
-      category3List: [],
+      //   category1List: [], // 1级分类数据
+      //   category2List: [],
+      //   category3List: [],
     };
   },
+  computed: {
+    ...mapState({
+      category1List: (state) => state.category.category1List,
+      category2List: (state) => state.category.category2List,
+      category3List: (state) => state.category.category3List,
+    }),
+  },
   methods: {
+    ...mapMutations(["category/SET_CATEGORY3_ID"]),
+    ...mapActions([
+      "category/getCategory1List",
+      "category/getCategory2List",
+      "category/getCategory3List",
+    ]),
     //获取二级分类
     async handleSelectChange1(category1Id) {
       // 重新选择一级分类后面清空列表和ID
-      this.category2List = [];
-      this.category3List = [];
-      this.category.category3Id = "";
-      this.category.category2Id = "";
-      //   console.log(vaule);
-      const result = await this.$API.attr.getCategorys2(category1Id);
-      //   console.log(result);
-      if (result.code === 200) {
-        this.category2List = result.data;
-      } else {
-        this.$message.error("获取失败");
-      }
+      //   this.category2List = [];
+      //   this.category3List = [];
+        // this.category.category3Id = "";
+        // this.category.category2Id = "";
+      this["category/getCategory2List"](category1Id);
       //清空列表    全局事件总线这咯要加$bus
-      this.$bus.$emit('clearList')
+    //   this.$bus.$emit("clearList");
     },
     // 获取三级分类
     async handleSelectChange2(category2Id) {
       // 重新选择二级分类后面清空列表和ID
-      this.category.category3Id = "";
-      this.category3List = [];
+        // this.category.category3Id = "";
+      //   this.category3List = [];
 
-      const result = await this.$API.attr.getCategorys3(category2Id);
-      //   console.log(result);
-      if (result.code === 200) {
-        this.category3List = result.data;
-      } else {
-        this.$message.error("获取失败");
-      }
+      this["category/getCategory3List"](category2Id);
       //清空列表
-       this.$bus.$emit('clearList')
+    //   this.$bus.$emit("clearList");
     },
-    // 获取全部的分类id  获取分类对应的属性列表  
+    // 获取全部的分类id  获取分类对应的属性列表
     async handleSelectChange3(category3Id) {
-      const category = {
-        ...this.category,
-        category3Id,
-      };
-    //   console.log(category);
-      this.$bus.$emit("change", category);  //自定义事件传过去
+      this["category/SET_CATEGORY3_ID"](category3Id);
     },
   },
   async mounted() {
-    const result = await this.$API.attr.getCategorys1();
-    // console.log(result);
-    if (result.code === 200) {
-      this.category1List = result.data;
-    } else {
-      this.$message.error("获取失败");
-    }
+    this["category/getCategory1List"]();
   },
 };
 </script>

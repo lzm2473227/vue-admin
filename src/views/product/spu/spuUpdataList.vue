@@ -129,16 +129,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="save">保存</el-button>
-        <el-button
-          @click="
-            $emit('showList', {
-              category3Id: spu.category3Id,
-              category2Id: spu.category2Id,
-              category1Id: spu.category1Id,
-            })
-          "
-          >取消</el-button
-        >
+        <el-button @click="$emit('showList')">取消</el-button>
       </el-form-item>
       <!-- 这里取消一开始没有携带2和3id，因为v-if的原因卸载了组件，所以必须要携带1id,2id,3id
       这三个id，否则就有点问题了，就只会有3id， -->
@@ -150,6 +141,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+import { category } from "@/api";
 export default {
   name: "SpuUpdataList",
   props: {
@@ -169,6 +162,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
     formatImageList() {
       return this.imageList.map((img) => {
         //处理数据，因为数据名字不一样，所以要改成一样的才可以加进去
@@ -199,6 +195,7 @@ export default {
           //收集数据
           const spu = {
             ...this.spu,
+            category3Id: this.category.category3Id,
             spuImageList: this.imageList,
             spuSaleAttrList: this.spuSaleAttrList,
           };
@@ -211,8 +208,8 @@ export default {
           }
           //   console.log(result);
           if (result.code === 200) {
-            this.$emit("showList", this.spu.category3Id);
-            this.$message.success("更新SPU成功");
+            this.$emit("showList");
+            this.$message.success(`${this.spu.id ? "更新" : "添加"}SPU成功`);
           } else {
             this.$message.error(result.message);
           }

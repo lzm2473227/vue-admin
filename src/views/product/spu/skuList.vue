@@ -27,7 +27,7 @@
           :key="attr.id"
         >
           <span>{{ attr.attrName }}</span>
-          <el-select value="adc" placeholder="请选择品牌">
+          <el-select value="adc" placeholder="请选择品牌" v-model="spu.attrId">
             <el-option
               v-for="value in attr.attrValueList"
               :key="value.id"
@@ -89,6 +89,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "spuItem",
   props: {
@@ -102,6 +103,11 @@ export default {
       attrList: [], //平台属性值列表
       sku: {}, // sku数据
     };
+  },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
   },
   methods: {
     handleSelectionChange() {},
@@ -131,11 +137,12 @@ export default {
     },
     // 获取所有平台属性列表
     async getAttrList() {
-      const result = await this.$API.attr.getAttrList({
-        category1Id: this.spu.category1Id,
-        category2Id: this.spu.category2Id,
-        category3Id: this.spu.category3Id,
-      });
+      //   const result = await this.$API.attr.getAttrList({
+      //     category1Id: this.spu.category1Id,
+      //     category2Id: this.spu.category2Id,
+      //     category3Id: this.spu.category3Id,
+      //   });
+      const result = await this.$API.attr.getAttrList(this.category);
       if (result.code === 200) {
         this.$message.success("获取所有销售属性列表成功");
         this.attrList = result.data;
