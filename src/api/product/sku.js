@@ -9,5 +9,20 @@ export default {
       method: "POST",
       data: sku
     });
-  }
+  },
+  //sku的分页数据获取
+  skuPageList(page, limit) {
+    return request({
+      url: `${api_name}/list/${page}/${limit}`,
+      method: "GET"
+    });
+  },
+  //删除指定id的sku
+  skuRemove(skuId) {
+    return request.delete(`/admin/product/deleteSku/${skuId}`);
+  },
+//查询sku单个的详细信息
+  getSku (skuId) {
+    return request.get(`/admin/product/getSkuById/${skuId}`)
+  },
 };
