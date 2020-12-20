@@ -33,7 +33,12 @@
             icon="el-icon-edit"
             @click="$emit('showUpdataList', { ...row, ...category })"
           ></el-button>
-          <el-button type="info" size="mini" icon="el-icon-info"></el-button>
+          <el-button
+            type="info"
+            size="mini"
+            icon="el-icon-info"
+            @click="getListBySpuId(row.id)"
+          ></el-button>
           <el-button
             @click="delUpdataList"
             type="danger"
@@ -54,10 +59,31 @@
       :total="total"
     >
     </el-pagination>
+
+    <el-dialog
+      :title="`${spu.spuName} => SKU列表`"
+      :visible.sync="isShowsku"
+    >
+      <el-table :data="skuList" v-loading="loading">
+        <el-table-column prop="skuName" label="名称"></el-table-column>
+        <el-table-column property="price" label="价格(元)"></el-table-column>
+        <el-table-column property="weight" label="重量(KG)"></el-table-column>
+        <el-table-column label="默认图片">
+          <template slot-scope="{ row }">
+            <img
+              :src="row.skuDefaultImg"
+              alt=""
+              style="width: 100px; height: 100px"
+            />
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
+import { spu } from "@/api";
 import { mapState } from "vuex";
 export default {
   name: "SpuShowList",
@@ -69,6 +95,9 @@ export default {
       total: 0,
       loading: false,
       spuList: [],
+      isShowsku: false, // 是否显示sku列表的dialog
+      spu: [],
+      skuList: [], // spu里的sku商品查看展示
       //   category: {
       //     category1Id: "",
       //     category2Id: "",
@@ -97,6 +126,15 @@ export default {
     },
   },
   methods: {
+    async getListBySpuId(id) {
+      this.loading = true; // 显示loading
+      this.isShowsku = true;
+      this.spu = spu;
+      const result = await this.$API.sku.getListBySpuId(id);
+      this.loading = false; // 隐藏loading
+      const skuList = result.data;
+      this.skuList = skuList;
+    },
     delUpdataList() {
       const { id } = this.spuList;
     },

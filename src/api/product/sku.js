@@ -1,6 +1,7 @@
 import request from "@/utils/request";
 
 const api_name = "/admin/product";
+
 export default {
   //请求SKU数据
   saveSku(sku) {
@@ -21,8 +22,8 @@ export default {
   skuRemove(skuId) {
     return request.delete(`/admin/product/deleteSku/${skuId}`);
   },
-//查询sku单个的详细信息
-  getSku (skuId) {
-    return request.get(`/admin/product/getSkuById/${skuId}`)
-  },
+  //根据SPU的id查询对应的sku列表
+  getListBySpuId(spuId) {
+    return request.get(`/admin/product/findBySpuId/${spuId}`);
+  }
 };
