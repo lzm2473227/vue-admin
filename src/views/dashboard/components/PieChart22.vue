@@ -1,5 +1,5 @@
 <template>
-  <ve-pie :data="chartData" :settings="chartSettings" ref="chart"></ve-pie>
+  <ve-pie :data="chartData" :settings="chartSettings"></ve-pie>
 </template>
 
 <script>
@@ -8,9 +8,9 @@ export default {
   mixins: [resize],
   data() {
     this.chartSettings = {
-      roseType: "radius",
-    //   dimension: "日期",
-    //   metrics: "访问用户",
+      //   roseType: "radius",
+      dimension: "日期",
+      metrics: "访问用户",
     };
     return {
       chartData: {
@@ -25,10 +25,6 @@ export default {
         ],
       },
     };
-  },
-
-  mounted() {
-    console.log("---", this.$refs.vePie);
   },
 };
 </script>

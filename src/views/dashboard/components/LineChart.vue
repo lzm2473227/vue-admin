@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
+      this.chart = echarts.init(this.$el, 'dark')
       this.setOptions(this.chartData)
     },
     setOptions({ expectedData, actualData } = {}) {
@@ -99,7 +99,7 @@ export default {
             color: "#FF005A",
           },
           areaStyle: { // 区域填充
-            color: '#ccc'
+            color: '#795896'
           },
           data: expectedData,
           animationDuration: 2800, // 显示动画时间

@@ -44,12 +44,14 @@
               type="info"
               v-if="row.isSale === true"
               icon="el-icon-top"
+              @click="getOnSale(row.id)"
             ></el-button>
             <el-button
               v-else
               size="mini"
               type="success"
               icon="el-icon-bottom"
+              @click="getCancelSale(row.id)"
             ></el-button>
             <el-button
               type="warning"
@@ -170,7 +172,7 @@ export default {
   name: "SKuList",
   data() {
     return {
-      skuTrademarkList: [],
+      skuTrademarkList: [], //sku的所有的数据
       loading: false,
       page: 1, //当前页码
       limit: 3, // 每页条数
@@ -178,10 +180,18 @@ export default {
       isSale: true, //上架下架开关
       skuInfo: {}, //单个sku商品详细信息
       isShowSkuInfo: false, //控制抽屉开关
-      innerDrawer: false,
+      innerDrawer: false, //element -ui里的属性
     };
   },
   methods: {
+    //sku上架
+    getOnSale(id) {
+      const result = this.$API.sku.onSale(id);
+    },
+    //sku下架
+    getCancelSale(id) {
+      const result = this.$API.sku.cancelSale(id);
+    },
     handleClose(done) {
       this.$confirm("确定关闭吗")
         .then((_) => {
@@ -189,13 +199,14 @@ export default {
         })
         .catch((_) => {});
     },
+    //查看sku单个商品
     async getSku(id) {
       this.isShowSkuInfo = true;
       const result = await this.$API.sku.getSku(id);
       this.skuInfo = result.data;
     },
-    details() {},
     updateTrademark() {},
+    //删除sku
     async getSkuRemove(id) {
       const result = await this.$API.sku.skuRemove(id);
       console.log(result);
@@ -203,7 +214,6 @@ export default {
       this.$message.success("删除sku成功");
       this.getSkuPageList(); //更新页面
     },
-    updateTrademark() {},
     // 更新获取页面
     async getSkuPageList(page = 1) {
       this.loading = true;

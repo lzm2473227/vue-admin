@@ -83,8 +83,8 @@ export default {
       // 重新选择一级分类后面清空列表和ID
       //   this.category2List = [];
       //   this.category3List = [];
-        // this.category.category3Id = "";
-        // this.category.category2Id = "";
+        this.category.category3Id = "";
+        this.category.category2Id = "";
       this["category/getCategory2List"](category1Id);
       //清空列表    全局事件总线这咯要加$bus
     //   this.$bus.$emit("clearList");
@@ -92,7 +92,7 @@ export default {
     // 获取三级分类
     async handleSelectChange2(category2Id) {
       // 重新选择二级分类后面清空列表和ID
-        // this.category.category3Id = "";
+        this.category.category3Id = "";
       //   this.category3List = [];
 
       this["category/getCategory3List"](category2Id);

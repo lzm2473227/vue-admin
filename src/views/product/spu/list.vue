@@ -49,9 +49,9 @@ export default {
       //     this.$bus.$emit("change",category);
       //   });
     },
-    beforeDestory() {
-      this.$store.commit("category/SET_CATEGORY3_ID");
-    },
+  },
+   beforeDestroy() {
+    this.$store.commit("category/RESET_CATEGORY_ID");
   },
   components: {
     Category,

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>echarts</title>
+  </head>
+  <body>
+    <div id="main" style="width: 600px;height:400px;"></div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.0.0/echarts.min.js"></script>
+    <script type="text/javascript">
+      // 基于准备好的dom，初始化echarts实例
+      var myChart = echarts.init(document.getElementById("main"));
+
+      // 指定图表的配置项和数据
+      var option = {
+        title: {
+          text: "堆叠区域图"
+        },
+        tooltip: {
+            trigger: "axis",
+            axisPointer: {
+              type: "cross", //横纵轴数据显示
+              label: {
+                backgroundColor: "#6a7985"//横纵轴数据显示的字体颜色
+              }
+            }
+        },
+        legend: {
+          data: ["销量"]
+        },
+        xAxis: {
+          data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+        },
+        yAxis: {},
+        series: [
+          {
+            name: "销量",
+            // type: "bar",
+            data: [150, 232, 201, 154, 190, 330, 410],
+            type: "line"
+          },
+          {
+            name: "联盟广告",
+            type: "line",
+            stack: "总量",
+            areaStyle: {},
+            data: [220, 182, 191, 234, 290, 330, 310]
+          },
+          {
+            name: "直接访问",
+            type: "line",
+            stack: "总量",
+            areaStyle: {},
+            data: [120, 132, 101, 134, 90, 230, 210]
+          }
+        ]
+      };
+
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+    </script>
+  </body>
+</html>

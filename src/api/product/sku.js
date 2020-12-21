@@ -20,10 +20,25 @@ export default {
   },
   //删除指定id的sku
   skuRemove(skuId) {
-    return request.delete(`/admin/product/deleteSku/${skuId}`);
+    return request.delete(`${api_name}/deleteSku/${skuId}`);
+  },
+  //GET /admin/product/getSkuById/{skuId}
+  //sku的单个商品的信息详细展示
+  getSku(skuId) {
+    return request.get(`${api_name}/getSkuById/${skuId}`);
   },
   //根据SPU的id查询对应的sku列表
   getListBySpuId(spuId) {
-    return request.get(`/admin/product/findBySpuId/${spuId}`);
+    return request.get(`${api_name}/findBySpuId/${spuId}`);
+  },
+  //sku上架
+  //GET /admin/product/onSale/{skuId}
+  onSale(spuId) {
+    return request.get(`${api_name}/onSale/${spuId}`);
+  },
+  //sku下架
+  //GET /admin/product/cancelSale/{skuId}
+  cancelSale(spuId) {
+    return request.get(`${api_name}/cancelSale/${spuId}`);
   }
 };
